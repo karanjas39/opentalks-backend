@@ -10,7 +10,7 @@ const PORT = process.env.PORT;
 const DB_PATH = process.env.DATABASE_PATH;
 
 // ADMIN
-require("./CONFIG/seed");
+// require("./seed");
 
 // DATABASE CONNECT
 mongoose

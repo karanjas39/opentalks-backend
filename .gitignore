@@ -131,3 +131,6 @@ dist
 
 # ENV FILE
 /config.env
+
+# Seed File
+/seed.js
