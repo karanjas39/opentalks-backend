@@ -883,18 +883,9 @@ async function postSearchInForum(req, res) {
       }
 
       let isMember = await join_forum.findOne({
-        $or: [
-          {
-            forumId,
-            userId: userId._id,
-            active: true,
-          },
-          {
-            forumId,
-            adminId: userId._id,
-            active: true,
-          },
-        ],
+        forumId,
+        userId: userId._id,
+        active: true,
       });
       if (!isMember) {
         return res.send({

@@ -4,6 +4,7 @@ const multer = require("multer");
 const path = require("path");
 
 const userController = require(".././CONTROLLERS/userControllers");
+const allowedUserControllers = require(".././CONTROLLERS/allowedUserControllers");
 const departmentControllers = require(".././CONTROLLERS/departmentControllers");
 const forumControllers = require(".././CONTROLLERS/forumControllers");
 const postControllers = require(".././CONTROLLERS/postControllers");
@@ -171,6 +172,15 @@ router.route("/forum/joinee/search/filter").post(forumControllers.filterJoinee);
 router
   .route("/forum/joinee/remove")
   .post(middlewares.verifyAdmin, forumControllers.leftJoinedForum);
+
+// ALLOWED USERS
+router
+  .route("/user/allowed/create")
+  .post(allowedUserControllers.createAllowedUser);
+router
+  .route("/user/allowed/recent")
+  .post(allowedUserControllers.getRecentAllowedUser);
+router.route("/user/allowed/get").post(allowedUserControllers.getAllowedUser);
 
 // OTHERS
 router.route("/stats").post(generalControllers.getStats);

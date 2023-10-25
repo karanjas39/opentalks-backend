@@ -9,10 +9,6 @@ let allowedUsersSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  active: {
-    type: Boolean,
-    default: true,
-  },
 });
 
 let allowedUserModel = mongoose.model("allowed_user", allowedUsersSchema);

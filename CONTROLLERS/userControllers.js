@@ -119,7 +119,7 @@ async function isUserAllowed(req, res) {
       return res.send({
         success: false,
         status: 400,
-        message: "User already Exist",
+        message: "User is already registered with Opentalks.",
       });
     }
 
@@ -131,7 +131,7 @@ async function isUserAllowed(req, res) {
       return res.send({
         success: false,
         status: 400,
-        message: "Department does not exist",
+        message: "This Department is not associated with Opentalks.",
       });
     }
 
@@ -209,7 +209,7 @@ async function createNewUser(req, res) {
       return res.send({
         success: false,
         status: 400,
-        message: "User already Exist",
+        message: "User is already registered with Opentalks.",
       });
     }
 
@@ -221,7 +221,7 @@ async function createNewUser(req, res) {
       return res.send({
         success: false,
         status: 400,
-        message: "Department does not exist",
+        message: "This Department is not associated with Opentalks.",
       });
     }
 
@@ -750,6 +750,12 @@ async function userLogin(req, res) {
         $lt: new Date(new Date() - 7 * 24 * 60 * 60 * 1000),
       },
     });
+
+    if (isUser.lastLogin == null) {
+      await Allowed_user.deleteOne({
+        registration_number: Number(registration_number),
+      });
+    }
 
     let lastLogin = isUser.lastLogin;
 
