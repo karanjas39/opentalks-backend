@@ -4,7 +4,7 @@
   "description": "This is the backend of the Opentalks website that is a forum basically designed for university students to pace up their learning.",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "node server.js"
   },
   "author": "Jaskaran Singh",
   "license": "ISC",
