@@ -31,8 +31,12 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// LOGIN
 router.route("/login").post(userController.userLogin);
 router.route("/register").post(userController.createUser);
+
+// DEPARTMENT
+router.route("/department/all").post(departmentControllers.getDepartmentsAll);
 
 // MIDDLEWARES
 router.use(middlewares.verify);
@@ -121,9 +125,6 @@ router
   .post(middlewares.verifyUser, replyController.deleteReply);
 router.route("/post/reply/all").post(replyController.getPostReply);
 router.route("/post/reply/recent").post(replyController.loadRecentReplies);
-
-// DEPARTMENT
-router.route("/department/all").post(departmentControllers.getDepartmentsAll);
 
 // COMPLAINTS
 router.route("/forum/complaint").post(complaintControllers.createComplaint);
