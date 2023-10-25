@@ -31,9 +31,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// LOGIN
+// LOGIN AND REGISTER
 router.route("/login").post(userController.userLogin);
-router.route("/register").post(userController.createUser);
+router.route("/user/allowed").post(userController.isUserAllowed);
+router.route("/register").post(userController.createNewUser);
 
 // DEPARTMENT
 router.route("/department/all").post(departmentControllers.getDepartmentsAll);

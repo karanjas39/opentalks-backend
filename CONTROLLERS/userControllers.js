@@ -8,13 +8,15 @@ const forum = require(".././MODEL/forumModel");
 const post = require(".././MODEL/postModel");
 const joinedForum = require(".././MODEL/joinForumModel");
 const notification = require("../MODEL/notificationModel");
+const Allowed_user = require(".././MODEL/allowedUsersModel");
 
 const fs = require("fs");
 
 const SALT = 12;
 
 module.exports = {
-  createUser,
+  isUserAllowed,
+  createNewUser,
   createUserByAdmin,
   getUser,
   getUserByAdmin,
@@ -83,72 +85,197 @@ async function confirmPassword(req, res) {
   }
 }
 
-async function createUser(req, res) {
+async function isUserAllowed(req, res) {
+  let { name, registration_number, email, departmentId } = req.body;
   try {
     let invalidFields = [];
-    let formData = req.body;
-    if (!formData.name) {
+    if (!name) {
       invalidFields.push("name");
     }
-    if (!formData.registration_number) {
+    if (!registration_number) {
       invalidFields.push("registration_number");
     }
-    if (!formData.email) {
+    if (!email) {
       invalidFields.push("email");
     }
-    if (!formData.password) {
-      invalidFields.push("password");
-    }
-    if (!formData.departmentId) {
+    if (!departmentId) {
       invalidFields.push("department Id");
     }
     if (invalidFields.length != 0) {
-      res.send({
+      return res.send({
         success: false,
         status: 400,
         message: `Invalid fields: ${invalidFields.join(", ")}`,
       });
-    } else {
-      let { registration_number, email } = formData;
-      let query = {
-        $or: [{ registration_number: registration_number }, { email: email }],
-      };
-      let isUserExist = await user.findOne(query);
-      if (!isUserExist) {
-        let isDepartmentExist = await department.findOne({
-          _id: formData.departmentId,
-        });
-        if (!isDepartmentExist) {
-          res.send({
-            success: false,
-            status: 400,
-            message: "Department does not exist",
-          });
-        } else {
-          let hashedPasword = bcrypt.hashSync(formData.password, SALT);
-          formData.password = hashedPasword;
-          let newUser = new user(formData);
-          await newUser.save();
-          res.send({
-            success: true,
-            status: 200,
-            message: "User Created",
-            user: newUser,
-          });
-        }
-      } else {
-        res.send({
-          success: false,
-          status: 400,
-          message: "User already Exist",
-        });
-      }
     }
+
+    let query = {
+      $or: [{ registration_number: registration_number }, { email: email }],
+    };
+
+    let isUserExist = await user.findOne(query);
+
+    if (!!isUserExist) {
+      return res.send({
+        success: false,
+        status: 400,
+        message: "User already Exist",
+      });
+    }
+
+    let isDepartmentExist = await department.findOne({
+      _id: departmentId,
+    });
+
+    if (!isDepartmentExist) {
+      return res.send({
+        success: false,
+        status: 400,
+        message: "Department does not exist",
+      });
+    }
+
+    let isRegistrationLength =
+      registration_number.toString().length == 8 ? true : false;
+
+    if (!isRegistrationLength) {
+      return res.send({
+        success: false,
+        status: 400,
+        message: "Registration number does not consist valid number of digits.",
+      });
+    }
+
+    let isUserAllowed = await Allowed_user.findOne({ registration_number });
+
+    if (!isUserAllowed) {
+      return res.send({
+        success: false,
+        status: 404,
+        message:
+          "The user is not admitted by Opentalks Administrator to create account.",
+      });
+    }
+
+    res.send({
+      success: true,
+      status: 200,
+      message: "User is allowed to create account.",
+    });
   } catch (error) {
     res.send({
       success: false,
       status: 500,
-      message: `Error: ${error.toString()} in Create-user`,
+      message: `Error: ${error.toString()} in isuserAllowed`,
+      query: { name, registration_number, departmentId, email },
+    });
+  }
+}
+
+async function createNewUser(req, res) {
+  try {
+    let { name, registration_number, email, password, departmentId } = req.body;
+    let invalidFields = [];
+    if (!name) {
+      invalidFields.push("name");
+    }
+    if (!registration_number) {
+      invalidFields.push("registration_number");
+    }
+    if (!email) {
+      invalidFields.push("email");
+    }
+    if (!password) {
+      invalidFields.push("password");
+    }
+    if (!departmentId) {
+      invalidFields.push("department Id");
+    }
+    if (invalidFields.length != 0) {
+      return res.send({
+        success: false,
+        status: 400,
+        message: `Invalid fields: ${invalidFields.join(", ")}`,
+      });
+    }
+
+    let query = {
+      $or: [{ registration_number: registration_number }, { email: email }],
+    };
+
+    let isUserExist = await user.findOne(query);
+
+    if (!!isUserExist) {
+      return res.send({
+        success: false,
+        status: 400,
+        message: "User already Exist",
+      });
+    }
+
+    let isDepartmentExist = await department.findOne({
+      _id: departmentId,
+    });
+
+    if (!isDepartmentExist) {
+      return res.send({
+        success: false,
+        status: 400,
+        message: "Department does not exist",
+      });
+    }
+
+    let isRegistrationLength =
+      registration_number.toString().length == 8 ? true : false;
+
+    if (!isRegistrationLength) {
+      return res.send({
+        success: false,
+        status: 400,
+        message: "Registration number does not consist valid number of digits.",
+      });
+    }
+
+    let isUserAllowed = await Allowed_user.findOne({ registration_number });
+
+    if (!isUserAllowed) {
+      return res.send({
+        success: false,
+        status: 404,
+        message:
+          "The user is not admitted by Opentalks Administrator to create account.",
+      });
+    }
+
+    let hashedPasword = bcrypt.hashSync(password, SALT);
+    password = hashedPasword;
+
+    let newUser = await user.create({
+      name,
+      registration_number,
+      departmentId,
+      password,
+      email,
+    });
+
+    if (!newUser) {
+      return res.send({
+        success: false,
+        status: 400,
+        message: "User is not created successfully.",
+      });
+    }
+
+    res.send({
+      success: true,
+      status: 200,
+      message: "User created successfully.",
+    });
+  } catch (error) {
+    res.send({
+      success: false,
+      status: 500,
+      message: `Error: ${error.toString()} in CreateNeUsers`,
     });
   }
 }
@@ -600,7 +727,7 @@ async function userLogin(req, res) {
       return res.send({
         success: false,
         status: 404,
-        message: "User not found",
+        message: "User is not registered with Opentalks.",
       });
     }
     let isPassword = bcrypt.compareSync(password, isUser.password);
@@ -608,7 +735,7 @@ async function userLogin(req, res) {
       return res.send({
         success: false,
         status: 400,
-        message: "Wrong password",
+        message: "Invalid credentials. Please try again!!",
       });
     }
 
@@ -648,7 +775,7 @@ async function userLogin(req, res) {
     res.send({
       success: true,
       status: 200,
-      message: "Login successful",
+      message: "Login successful.",
       data: {
         _id: isUser._id,
         url: "./admin.html",
