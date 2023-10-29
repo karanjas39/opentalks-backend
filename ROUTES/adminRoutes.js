@@ -176,11 +176,14 @@ router
 // ALLOWED USERS
 router
   .route("/user/allowed/create")
-  .post(allowedUserControllers.createAllowedUser);
+  .post(middlewares.verifyAdmin, allowedUserControllers.createAllowedUser);
 router
   .route("/user/allowed/recent")
   .post(allowedUserControllers.getRecentAllowedUser);
 router.route("/user/allowed/get").post(allowedUserControllers.getAllowedUser);
+router
+  .route("/user/allowed/delete")
+  .post(middlewares.verifyAdmin, allowedUserControllers.deleteAllowedUser);
 
 // OTHERS
 router.route("/stats").post(generalControllers.getStats);
