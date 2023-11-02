@@ -655,11 +655,6 @@ async function updateUserImageByAdmin(req, res) {
     let { _id } = req.body;
 
     if (!!req.file) {
-      return res.send({
-        success: false,
-        status: 400,
-        message: "This service is not working in production.",
-      });
       let isUser = await user.findOne({ _id });
       if (!isUser) {
         return res.send({
@@ -925,11 +920,6 @@ async function updateUserDetails(req, res) {
 async function updateUserImage(req, res) {
   try {
     const { _id } = req.body;
-    return res.send({
-      success: false,
-      status: 400,
-      message: "This feature is not working in production.",
-    });
 
     if (!req.file) {
       return res.send({

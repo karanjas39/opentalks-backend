@@ -51,6 +51,7 @@ router
 router
   .route("/update/image")
   .post(
+    middlewares.imageUploadRestriction,
     upload.single("image"),
     middlewares.verifyUserFormData,
     userController.updateUserImage

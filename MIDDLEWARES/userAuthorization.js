@@ -4,7 +4,13 @@ const user = require(".././MODEL/userModel");
 
 const secretKey = process.env.SECRET_KEY;
 
-module.exports = { verify, verifyAdmin, verifyUser, verifyUserFormData };
+module.exports = {
+  verify,
+  verifyAdmin,
+  verifyUser,
+  verifyUserFormData,
+  imageUploadRestriction,
+};
 
 async function verify(req, res, next) {
   let { authorization } = req.headers;
@@ -140,6 +146,22 @@ async function verifyUserFormData(req, res, next) {
       success: false,
       status: 403,
       message: "User authorization failed",
+    });
+  }
+}
+
+function imageUploadRestriction(req, res, next) {
+  try {
+    res.send({
+      success: false,
+      status: 400,
+      message: "This feature is not supported in production.",
+    });
+  } catch (error) {
+    res.send({
+      success: false,
+      status: 500,
+      message: `Error: ${error.toString()} in imageUploadRestrictionB`,
     });
   }
 }
