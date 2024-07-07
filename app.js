@@ -1,27 +1,21 @@
 const express = require("express");
 const app = express();
-
 const cors = require("cors");
-
 const path = require("path");
 
-const functions = require("./MODULES/functions");
-
-const adminRoutes = require("./ROUTES/adminRoutes");
-const userRoutes = require("./ROUTES/userRoutes");
+const functions = require("./modules/functions");
+const adminRoutes = require("./routes/adminRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 // MIDDLEWARES
-app.use(cors());
-app.use(express.static(path.join(__dirname, "/PUBLIC")));
+app.use(cors({ origin: process.env.CORS_ORIGIN }));
+app.use(express.static(path.join(__dirname, "/public")));
 app.use(express.json());
-app.use(express.urlencoded());
-app.get("/", (req, res) => {
-  res.json({ message: "Opentalks backend is working." });
-});
+app.use(express.urlencoded({ extended: true }));
 app.use("/admin", adminRoutes);
 app.use("/api", userRoutes);
 
-// UNHANDLES ROUTES
-app.route("*").all(functions.unhandledRoutes);
+// UNHANDLED ROUTES
+app.all("*", functions.unhandledRoutes);
 
 module.exports = app;

@@ -6,23 +6,20 @@ const app = require("./app");
 const mongoose = require("mongoose");
 
 // VARIABLES
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 const DB_PATH = process.env.DATABASE_PATH;
-
-// ADMIN
-// require("./seed");
 
 // DATABASE CONNECT
 mongoose
-  .connect(DB_PATH)
-  .then((data) => {
-    console.log(`DATABASE CONNECTED SUCCESFULLY`);
+  .connect(DB_PATH, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log(`DATABASE CONNECTED SUCCESSFULLY`);
   })
   .catch((err) => {
-    console.log(`Error : ${err.toString()}`);
+    console.log(`Error: ${err}`);
   });
 
-//   SERVER START
+// SERVER START
 app.listen(PORT, () => {
   console.log(`SERVER STARTED AT PORT: ${PORT}`);
 });

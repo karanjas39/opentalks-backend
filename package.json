@@ -2,7 +2,7 @@
   "name": "opentalks-forum",
   "version": "1.0.0",
   "description": "This is the backend of the Opentalks website that is a forum basically designed for university students to pace up their learning.",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js"
