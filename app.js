@@ -3,9 +3,9 @@ const app = express();
 const cors = require("cors");
 const path = require("path");
 
-const functions = require("./modules/functions");
-const adminRoutes = require("./routes/adminRoutes");
-const userRoutes = require("./routes/userRoutes");
+const functions = require("./MODULES/functions");
+const adminRoutes = require("./ROUTES/adminRoutes");
+const userRoutes = require("./ROUTES/userRoutes");
 
 // MIDDLEWARES
 app.use(cors({ origin: process.env.CORS_ORIGIN }));
