@@ -3,17 +3,12 @@
   "builds": [
     {
       "src": "server.js",
-      "use": "@now/node-server"
+      "use": "@now/node-server",
+      "config": { "NODE_OPTIONS": "--openssl-legacy-provider" }
     }
   ],
   "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/"
-    }
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/(.*)", "dest": "/server.js" }
   ]
 }
