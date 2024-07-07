@@ -15,6 +15,9 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, "/PUBLIC")));
 app.use(express.json());
 app.use(express.urlencoded());
+app.get("/", (req, res) => {
+  res.json({ message: "Opentalks backend is working." });
+});
 app.use("/admin", adminRoutes);
 app.use("/api", userRoutes);
 
